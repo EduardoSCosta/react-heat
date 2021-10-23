@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { api } from '../../services/api';
 
 import styles from './styles.module.scss';
 import logoImg from '../../assets/logo.svg';
+import { ThemeContext } from '../../contexts/theme';
 
 type Message = {
   id: string;
@@ -23,6 +24,7 @@ socket.on('new_message', (newMessage: Message) => {
 })
 
 export function MessageList() {
+  const { theme } = useContext(ThemeContext);
 
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -53,12 +55,12 @@ export function MessageList() {
         {messages.map(message => {
           return (
             <li key={message.id} className={styles.message}>
-              <p className={styles.messageContent}>{message.text}</p>
+              <p className={`${styles.messageContent} ${theme === "light" ? styles.light : ''}`}>{message.text}</p>
               <div className={styles.messageUser}>
                 <div className={styles.userImage}>
-                  <img src={message.user.avatar_url} alt={message.user.name} />
+                  <img className={theme === "light" ? styles.light : ''} src={message.user.avatar_url} alt={message.user.name} />
                 </div>                
-                <span>{message.user.name}</span>
+                <span className={`${styles.themeSwitch} ${theme === "light" ? styles.light : ''}`}>{message.user.name}</span>
               </div>
             </li>
           );
